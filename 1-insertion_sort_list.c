@@ -1,52 +1,47 @@
-# include "sort.h"
+#include "sort.h"
+#include <stdio.h>
 
 /**
- * swap - swaps 2 nodes in a doubly linked list
- * @a: address of first node
- * @b: address of second node
- * Return: nothing
-*/
-
-void swap(listint_t *a, listint_t *b)
-{
-	if (a->prev)
-		a->prev->next = b;
-	if (b->next)
-		b->next->prev = a;
-	a->next = b->next;
-	b->prev = a->prev;
-	a->prev = b;
-	b->next = a;
-}
-
-/**
- * insertion_sort_list - function to apply insertion sort
- * @list: list to be sorted
- * Return: nothing
-*/
-
+ * insertion_sort_list - sorts a DLL of integers in
+ * ascending order using the insertion sort
+ * algorithm
+ *
+ * @list: doubly linked list
+ * Return: no return
+ */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *i, *j;
+	listint_t *ptr, *tmp;
 
-	if (!list || !*list || !(*list)->next)
+	if (!list)
 		return;
-	i = (*list)->next;
-	while (i)
+
+	ptr = *list;
+
+	while (ptr)
 	{
-		j = i;
-		i = i->next;
-		while (j && j->prev)
+		while (ptr->next && (ptr->n > ptr->next->n))
 		{
-			if (j->prev->n > j->n)
-			{
-				swap(j->prev, j);
-				if (!j->prev)
-					*list = j;
-				print_list((const listint_t *) *list);
-			}
+			tmp = ptr->next;
+			ptr->next = tmp->next;
+			tmp->prev = ptr->prev;
+
+			if (ptr->prev)
+				ptr->prev->next = tmp;
+
+			if (tmp->next)
+				tmp->next->prev = ptr;
+
+			ptr->prev = tmp;
+			tmp->next = ptr;
+
+			if (tmp->prev)
+				ptr = tmp->prev;
 			else
-				j = j->prev;
+				*list = tmp;
+
+			print_list(*list);
 		}
+		ptr = ptr->next;
 	}
 }
